@@ -1,0 +1,881 @@
+local TweenService = game:GetService("TweenService")
+local RunService = game:GetService("RunService")
+local Players = game:GetService("Players")
+
+local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+
+local function createR1Intro()
+    local screenGui = Instance.new("ScreenGui")
+    screenGui.Name = "R1Intro"
+    screenGui.ResetOnSpawn = false
+    screenGui.IgnoreGuiInset = true
+    screenGui.DisplayOrder = 1000
+    screenGui.Parent = playerGui
+    
+    local mainFrame = Instance.new("Frame")
+    mainFrame.Name = "MainFrame"
+    mainFrame.Size = UDim2.new(1, 0, 1, 0)
+    mainFrame.Position = UDim2.new(0, 0, 0, 0)
+    mainFrame.BackgroundColor3 = Color3.fromRGB(2, 2, 2)
+    mainFrame.BorderSizePixel = 0
+    mainFrame.Parent = screenGui
+    
+    local backgroundGradient = Instance.new("UIGradient")
+    backgroundGradient.Color = ColorSequence.new{
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 0, 0)),
+        ColorSequenceKeypoint.new(0.2, Color3.fromRGB(8, 8, 8)),
+        ColorSequenceKeypoint.new(0.4, Color3.fromRGB(15, 15, 15)),
+        ColorSequenceKeypoint.new(0.6, Color3.fromRGB(25, 25, 25)),
+        ColorSequenceKeypoint.new(0.8, Color3.fromRGB(12, 12, 12)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(3, 3, 3))
+    }
+    backgroundGradient.Rotation = 135
+    backgroundGradient.Parent = mainFrame
+    
+    local overlayFrame = Instance.new("Frame")
+    overlayFrame.Size = UDim2.new(1, 0, 1, 0)
+    overlayFrame.BackgroundTransparency = 0.4
+    overlayFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    overlayFrame.BorderSizePixel = 0
+    overlayFrame.Parent = mainFrame
+    
+    local overlayGradient = Instance.new("UIGradient")
+    overlayGradient.Color = ColorSequence.new{
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(20, 20, 20)),
+        ColorSequenceKeypoint.new(0.3, Color3.fromRGB(5, 5, 5)),
+        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(15, 15, 15)),
+        ColorSequenceKeypoint.new(0.7, Color3.fromRGB(8, 8, 8)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(25, 25, 25))
+    }
+    overlayGradient.Rotation = -60
+    overlayGradient.Parent = overlayFrame
+    
+    local vortexContainer = Instance.new("Frame")
+    vortexContainer.Size = UDim2.new(2, 0, 2, 0)
+    vortexContainer.Position = UDim2.new(-0.5, 0, -0.5, 0)
+    vortexContainer.BackgroundTransparency = 1
+    vortexContainer.Parent = mainFrame
+    
+    for ring = 1, 4 do
+        local vortexRing = Instance.new("Frame")
+        vortexRing.Name = "VortexRing" .. ring
+        local size = 150 + (ring * 120)
+        vortexRing.Size = UDim2.new(0, size, 0, size)
+        vortexRing.Position = UDim2.new(0.5, -size/2, 0.5, -size/2)
+        vortexRing.BackgroundTransparency = 0.88 + (ring * 0.015)
+        vortexRing.BackgroundColor3 = Color3.fromRGB(40 + ring * 8, 40 + ring * 8, 40 + ring * 8)
+        vortexRing.BorderSizePixel = 0
+        vortexRing.Parent = vortexContainer
+        
+        local vortexCorner = Instance.new("UICorner")
+        vortexCorner.CornerRadius = UDim.new(1, 0)
+        vortexCorner.Parent = vortexRing
+        
+        local vortexStroke = Instance.new("UIStroke")
+        vortexStroke.Thickness = 1
+        vortexStroke.Color = Color3.fromRGB(80 + ring * 15, 80 + ring * 15, 80 + ring * 15)
+        vortexStroke.Transparency = 0.8
+        vortexStroke.Parent = vortexRing
+        
+        spawn(function()
+            while vortexRing.Parent do
+                local speed = 20 + (ring * 5)
+                local direction = ring % 2 == 0 and 360 or -360
+                local vortexSpin = TweenService:Create(
+                    vortexRing,
+                    TweenInfo.new(speed, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut, -1),
+                    {Rotation = direction}
+                )
+                vortexSpin:Play()
+                wait(speed)
+            end
+        end)
+    end
+    
+    local smokeContainer = Instance.new("Frame")
+    smokeContainer.Name = "SmokeContainer"
+    smokeContainer.Size = UDim2.new(1, 0, 1, 0)
+    smokeContainer.BackgroundTransparency = 1
+    smokeContainer.Parent = mainFrame
+    
+    for layer = 1, 3 do
+        for i = 1, 10 do
+            local smoke = Instance.new("Frame")
+            smoke.Name = "Smoke" .. layer .. "_" .. i
+            local baseSize = math.random(120, 250) + (layer * 40)
+            smoke.Size = UDim2.new(0, baseSize, 0, baseSize)
+            smoke.Position = UDim2.new(
+                math.random() * 1.4 - 0.2, 
+                0, 
+                math.random() * 1.4 - 0.2, 
+                0
+            )
+            local grayTone = math.random(15, 35)
+            smoke.BackgroundColor3 = Color3.fromRGB(grayTone, grayTone, grayTone)
+            smoke.BackgroundTransparency = 0.75 + (layer * 0.05)
+            smoke.BorderSizePixel = 0
+            smoke.Parent = smokeContainer
+            
+            local smokeCorner = Instance.new("UICorner")
+            smokeCorner.CornerRadius = UDim.new(1, 0)
+            smokeCorner.Parent = smoke
+            
+            local smokeGradient = Instance.new("UIGradient")
+            smokeGradient.Color = ColorSequence.new{
+                ColorSequenceKeypoint.new(0, Color3.fromRGB(60, 60, 60)),
+                ColorSequenceKeypoint.new(0.4, Color3.fromRGB(25, 25, 25)),
+                ColorSequenceKeypoint.new(1, Color3.fromRGB(10, 10, 10))
+            }
+            smokeGradient.Rotation = math.random(0, 360)
+            smokeGradient.Parent = smoke
+            
+            spawn(function()
+                while smoke.Parent do
+                    local duration = math.random(12, 20)
+                    local newX = math.random() * 1.4 - 0.2
+                    local newY = math.random() * 1.4 - 0.2
+                    local newSize = math.random(100, 280) + (layer * 40)
+                    
+                    local smokeTween = TweenService:Create(
+                        smoke,
+                        TweenInfo.new(
+                            duration, 
+                            Enum.EasingStyle.Sine, 
+                            Enum.EasingDirection.InOut
+                        ),
+                        {
+                            Position = UDim2.new(newX, 0, newY, 0),
+                            Size = UDim2.new(0, newSize, 0, newSize),
+                            BackgroundTransparency = math.random(70, 90) / 100
+                        }
+                    )
+                    smokeTween:Play()
+                    
+                    wait(duration * 0.7)
+                end
+            end)
+        end
+    end
+    
+    local particleContainer = Instance.new("Frame")
+    particleContainer.Name = "ParticleContainer"
+    particleContainer.Size = UDim2.new(1, 0, 1, 0)
+    particleContainer.BackgroundTransparency = 1
+    particleContainer.Parent = mainFrame
+    
+    for i = 1, 25 do
+        local particle = Instance.new("Frame")
+        particle.Name = "Particle" .. i
+        local size = math.random(1, 3)
+        particle.Size = UDim2.new(0, size, 0, size)
+        particle.Position = UDim2.new(math.random(), 0, math.random(), 0)
+        particle.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+        particle.BackgroundTransparency = 0.2
+        particle.BorderSizePixel = 0
+        particle.Parent = particleContainer
+        
+        local particleCorner = Instance.new("UICorner")
+        particleCorner.CornerRadius = UDim.new(1, 0)
+        particleCorner.Parent = particle
+        
+        local particleGlow = Instance.new("UIStroke")
+        particleGlow.Thickness = 0.8
+        particleGlow.Color = Color3.fromRGB(255, 255, 255)
+        particleGlow.Transparency = 0.4
+        particleGlow.Parent = particle
+        
+        spawn(function()
+            while particle.Parent do
+                local duration = math.random(10, 16)
+                local particleTween = TweenService:Create(
+                    particle,
+                    TweenInfo.new(duration, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut),
+                    {
+                        Position = UDim2.new(math.random(), 0, math.random(), 0),
+                        BackgroundTransparency = math.random(20, 60) / 100
+                    }
+                )
+                particleTween:Play()
+                
+                wait(duration * 0.8)
+            end
+        end)
+    end
+    
+    local lightRayContainer = Instance.new("Frame")
+    lightRayContainer.Size = UDim2.new(1, 0, 1, 0)
+    lightRayContainer.BackgroundTransparency = 1
+    lightRayContainer.Parent = mainFrame
+    
+    for i = 1, 8 do
+        local lightRay = Instance.new("Frame")
+        lightRay.Size = UDim2.new(0, 2, 1.8, 0)
+        lightRay.Position = UDim2.new(math.random() * 1.5 - 0.25, 0, -0.4, 0)
+        lightRay.BackgroundColor3 = Color3.fromRGB(220, 220, 220)
+        lightRay.BackgroundTransparency = 0.82
+        lightRay.BorderSizePixel = 0
+        lightRay.Rotation = math.random(-20, 20)
+        lightRay.Parent = lightRayContainer
+        
+        local rayGradient = Instance.new("UIGradient")
+        rayGradient.Color = ColorSequence.new{
+            ColorSequenceKeypoint.new(0, Color3.fromRGB(80, 80, 80)),
+            ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 255, 255)),
+            ColorSequenceKeypoint.new(1, Color3.fromRGB(120, 120, 120))
+        }
+        rayGradient.Rotation = 90
+        rayGradient.Transparency = NumberSequence.new{
+            NumberSequenceKeypoint.new(0, 1),
+            NumberSequenceKeypoint.new(0.2, 0.7),
+            NumberSequenceKeypoint.new(0.8, 0.7),
+            NumberSequenceKeypoint.new(1, 1)
+        }
+        rayGradient.Parent = lightRay
+        
+        spawn(function()
+            while lightRay.Parent do
+                local moveTween = TweenService:Create(
+                    lightRay,
+                    TweenInfo.new(math.random(12, 20), Enum.EasingStyle.Linear),
+                    {Position = UDim2.new(lightRay.Position.X.Scale + 0.2, 0, -0.4, 0)}
+                )
+                moveTween:Play()
+                
+                wait(math.random(8, 15))
+                lightRay.Position = UDim2.new(math.random() * 1.5 - 0.25, 0, -0.4, 0)
+            end
+        end)
+    end
+    
+    local textContainer = Instance.new("Frame")
+    textContainer.Name = "TextContainer"
+    textContainer.Size = UDim2.new(0.7, 0, 0.25, 0)
+    textContainer.Position = UDim2.new(0.15, 0, 0.375, 0)
+    textContainer.BackgroundTransparency = 1
+    textContainer.Parent = mainFrame
+    
+    local mainText = Instance.new("TextLabel")
+    mainText.Name = "MainText"
+    mainText.Size = UDim2.new(1, 0, 1, 0)
+    mainText.Position = UDim2.new(0, 0, 0, 0)
+    mainText.BackgroundTransparency = 1
+    mainText.Text = ""
+    mainText.TextColor3 = Color3.fromRGB(255, 255, 255)
+    mainText.TextScaled = true
+    mainText.Font = Enum.Font.GothamBold
+    mainText.TextStrokeTransparency = 0.1
+    mainText.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+    mainText.TextTransparency = 0
+    mainText.Parent = textContainer
+    
+    local textGradient = Instance.new("UIGradient")
+    textGradient.Color = ColorSequence.new{
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 255, 255)),
+        ColorSequenceKeypoint.new(0.2, Color3.fromRGB(240, 240, 240)),
+        ColorSequenceKeypoint.new(0.4, Color3.fromRGB(200, 200, 200)),
+        ColorSequenceKeypoint.new(0.6, Color3.fromRGB(180, 180, 180)),
+        ColorSequenceKeypoint.new(0.8, Color3.fromRGB(220, 220, 220)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(160, 160, 160))
+    }
+    textGradient.Rotation = 90
+    textGradient.Parent = mainText
+    
+    local textShadow = Instance.new("TextLabel")
+    textShadow.Size = UDim2.new(1, 3, 1, 3)
+    textShadow.Position = UDim2.new(0, -1.5, 0, -1.5)
+    textShadow.BackgroundTransparency = 1
+    textShadow.Text = ""
+    textShadow.TextColor3 = Color3.fromRGB(0, 0, 0)
+    textShadow.TextScaled = true
+    textShadow.Font = Enum.Font.GothamBold
+    textShadow.TextTransparency = 0.2
+    textShadow.ZIndex = -1
+    textShadow.Parent = mainText
+    
+    local subtitle = Instance.new("TextLabel")
+    subtitle.Name = "Subtitle"
+    subtitle.Size = UDim2.new(1, 0, 0.3, 0)
+    subtitle.Position = UDim2.new(0, 0, 1.15, 0)
+    subtitle.BackgroundTransparency = 1
+    subtitle.Text = ""
+    subtitle.TextColor3 = Color3.fromRGB(200, 200, 200)
+    subtitle.TextScaled = true
+    subtitle.Font = Enum.Font.Gotham
+    subtitle.TextTransparency = 1
+    subtitle.TextStrokeTransparency = 0.4
+    subtitle.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+    subtitle.Parent = textContainer
+    
+    local topLine = Instance.new("Frame")
+    topLine.Size = UDim2.new(0, 0, 0, 4)
+    topLine.Position = UDim2.new(0.5, 0, -0.12, 0)
+    topLine.AnchorPoint = Vector2.new(0.5, 0.5)
+    topLine.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    topLine.BorderSizePixel = 0
+    topLine.Parent = textContainer
+    
+    local bottomLine = Instance.new("Frame")
+    bottomLine.Size = UDim2.new(0, 0, 0, 4)
+    bottomLine.Position = UDim2.new(0.5, 0, 1.12, 0)
+    bottomLine.AnchorPoint = Vector2.new(0.5, 0.5)
+    bottomLine.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    bottomLine.BorderSizePixel = 0
+    bottomLine.Parent = textContainer
+    
+    local topLineGlow = Instance.new("UIStroke")
+    topLineGlow.Thickness = 2
+    topLineGlow.Color = Color3.fromRGB(255, 255, 255)
+    topLineGlow.Transparency = 0.6
+    topLineGlow.Parent = topLine
+    
+    local bottomLineGlow = Instance.new("UIStroke")
+    bottomLineGlow.Thickness = 2
+    bottomLineGlow.Color = Color3.fromRGB(255, 255, 255)
+    bottomLineGlow.Transparency = 0.6
+    bottomLineGlow.Parent = bottomLine
+    
+    local topLineGradient = Instance.new("UIGradient")
+    topLineGradient.Color = ColorSequence.new{
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(60, 60, 60)),
+        ColorSequenceKeypoint.new(0.25, Color3.fromRGB(200, 200, 200)),
+        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 255, 255)),
+        ColorSequenceKeypoint.new(0.75, Color3.fromRGB(200, 200, 200)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(60, 60, 60))
+    }
+    topLineGradient.Parent = topLine
+    
+    local bottomLineGradient = Instance.new("UIGradient")
+    bottomLineGradient.Color = ColorSequence.new{
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(60, 60, 60)),
+        ColorSequenceKeypoint.new(0.25, Color3.fromRGB(200, 200, 200)),
+        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 255, 255)),
+        ColorSequenceKeypoint.new(0.75, Color3.fromRGB(200, 200, 200)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(60, 60, 60))
+    }
+    bottomLineGradient.Parent = bottomLine
+    
+    local glowFrame = Instance.new("Frame")
+    glowFrame.Name = "GlowFrame"
+    glowFrame.Size = UDim2.new(1.2, 0, 1.3, 0)
+    glowFrame.Position = UDim2.new(-0.1, 0, -0.15, 0)
+    glowFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    glowFrame.BackgroundTransparency = 1
+    glowFrame.BorderSizePixel = 0
+    glowFrame.Parent = textContainer
+    
+    local glowGradient = Instance.new("UIGradient")
+    glowGradient.Color = ColorSequence.new{
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(40, 40, 40)),
+        ColorSequenceKeypoint.new(0.3, Color3.fromRGB(180, 180, 180)),
+        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 255, 255)),
+        ColorSequenceKeypoint.new(0.7, Color3.fromRGB(180, 180, 180)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(40, 40, 40))
+    }
+    glowGradient.Transparency = NumberSequence.new{
+        NumberSequenceKeypoint.new(0, 1),
+        NumberSequenceKeypoint.new(0.15, 0.7),
+        NumberSequenceKeypoint.new(0.85, 0.7),
+        NumberSequenceKeypoint.new(1, 1)
+    }
+    glowGradient.Parent = glowFrame
+    
+    local glowCorner = Instance.new("UICorner")
+    glowCorner.CornerRadius = UDim.new(0, 25)
+    glowCorner.Parent = glowFrame
+    
+    mainFrame.BackgroundTransparency = 1
+    local bgFadeIn = TweenService:Create(
+        mainFrame,
+        TweenInfo.new(1.2, Enum.EasingStyle.Quart, Enum.EasingDirection.Out),
+        {BackgroundTransparency = 0}
+    )
+    bgFadeIn:Play()
+    
+    spawn(function()
+        while mainFrame.Parent do
+            local gradientTween = TweenService:Create(
+                backgroundGradient,
+                TweenInfo.new(18, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut),
+                {Rotation = backgroundGradient.Rotation + 180}
+            )
+            gradientTween:Play()
+            
+            local overlayTween = TweenService:Create(
+                overlayGradient,
+                TweenInfo.new(22, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut),
+                {Rotation = overlayGradient.Rotation - 180}
+            )
+            overlayTween:Play()
+            
+            wait(18)
+        end
+    end)
+    
+    wait(1.2)
+    
+    glowFrame.Size = UDim2.new(0.05, 0, 0.05, 0)
+    glowFrame.Position = UDim2.new(0.475, 0, 0.475, 0)
+    
+    local glowExpand = TweenService:Create(
+        glowFrame,
+        TweenInfo.new(1.2, Enum.EasingStyle.Quart, Enum.EasingDirection.Out),
+        {
+            Size = UDim2.new(1.2, 0, 1.3, 0),
+            Position = UDim2.new(-0.1, 0, -0.15, 0),
+            BackgroundTransparency = 0.75
+        }
+    )
+    glowExpand:Play()
+    
+    wait(0.6)
+    
+    textContainer.Size = UDim2.new(0.1, 0, 0.05, 0)
+    textContainer.Position = UDim2.new(0.45, 0, 0.4875, 0)
+    
+    local textScale = TweenService:Create(
+        textContainer,
+        TweenInfo.new(1.3, Enum.EasingStyle.Quart, Enum.EasingDirection.Out),
+        {
+            Size = UDim2.new(0.7, 0, 0.25, 0),
+            Position = UDim2.new(0.15, 0, 0.375, 0)
+        }
+    )
+    textScale:Play()
+    
+    spawn(function()
+        wait(0.4)
+        local fullText = "SH | STUDIO"
+        for i = 1, #fullText do
+            local currentLetter = string.sub(fullText, i, i)
+            mainText.Text = string.sub(fullText, 1, i)
+            textShadow.Text = string.sub(fullText, 1, i)
+            
+            if currentLetter ~= " " then
+                local scaleUp = TweenService:Create(
+                    mainText,
+                    TweenInfo.new(0.08, Enum.EasingStyle.Back, Enum.EasingDirection.Out),
+                    {Position = UDim2.new(0, 0, -0.02, 0)}
+                )
+                scaleUp:Play()
+                
+                scaleUp.Completed:Connect(function()
+                    local scaleDown = TweenService:Create(
+                        mainText,
+                        TweenInfo.new(0.15, Enum.EasingStyle.Bounce, Enum.EasingDirection.Out),
+                        {Position = UDim2.new(0, 0, 0, 0)}
+                    )
+                    scaleDown:Play()
+                end)
+            end
+            
+            wait(0.07)
+        end
+    end)
+    
+    wait(0.9)
+    
+    local topLineExtend = TweenService:Create(
+        topLine,
+        TweenInfo.new(0.9, Enum.EasingStyle.Quart, Enum.EasingDirection.Out),
+        {Size = UDim2.new(0.9, 0, 0, 4)}
+    )
+    topLineExtend:Play()
+    
+    spawn(function()
+        local glowPulse = TweenService:Create(
+            topLineGlow,
+            TweenInfo.new(0.25, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, 4),
+            {Transparency = 0.2}
+        )
+        glowPulse:Play()
+    end)
+    
+    wait(0.25)
+    
+    local bottomLineExtend = TweenService:Create(
+        bottomLine,
+        TweenInfo.new(0.9, Enum.EasingStyle.Quart, Enum.EasingDirection.Out),
+        {Size = UDim2.new(0.9, 0, 0, 4)}
+    )
+    bottomLineExtend:Play()
+    
+    spawn(function()
+        local glowPulse2 = TweenService:Create(
+            bottomLineGlow,
+            TweenInfo.new(0.25, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, 4),
+            {Transparency = 0.2}
+        )
+        glowPulse2:Play()
+    end)
+    
+    spawn(function()
+        wait(0.4)
+        while topLine.Parent do
+            local waveTop = TweenService:Create(
+                topLineGradient,
+                TweenInfo.new(3, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1),
+                {Offset = Vector2.new(1.2, 0)}
+            )
+            waveTop:Play()
+            wait(3)
+        end
+    end)
+    
+    spawn(function()
+        wait(0.5)
+        while bottomLine.Parent do
+            local waveBottom = TweenService:Create(
+                bottomLineGradient,
+                TweenInfo.new(3.5, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1),
+                {Offset = Vector2.new(-1.2, 0)}
+            )
+            waveBottom:Play()
+            wait(3.5)
+        end
+    end)
+    
+    wait(0.7)
+    
+    local subtitleFade = TweenService:Create(
+        subtitle,
+        TweenInfo.new(0.6, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+        {TextTransparency = 0.2}
+    )
+    subtitleFade:Play()
+    
+    spawn(function()
+        local fullText = "https://discord.gg/BuCu2dXqZr"
+        for i = 1, #fullText do
+            subtitle.Text = string.sub(fullText, 1, i)
+            
+            local charGlow = TweenService:Create(
+                subtitle,
+                TweenInfo.new(0.04, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                {TextStrokeTransparency = 0.2}
+            )
+            charGlow:Play()
+            
+            charGlow.Completed:Connect(function()
+                local resetGlow = TweenService:Create(
+                    subtitle,
+                    TweenInfo.new(0.08, Enum.EasingStyle.Quad, Enum.EasingDirection.In),
+                    {TextStrokeTransparency = 0.4}
+                )
+                resetGlow:Play()
+            end)
+            
+            wait(0.05)
+        end
+    end)
+    
+    spawn(function()
+        wait(0.8)
+        while mainText.Parent do
+            local textGradientShift = TweenService:Create(
+                textGradient,
+                TweenInfo.new(8, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut),
+                {
+                    Rotation = textGradient.Rotation + 45,
+                    Offset = Vector2.new(0.4, 0)
+                }
+            )
+            textGradientShift:Play()
+            wait(4)
+            
+            local textGradientShift2 = TweenService:Create(
+                textGradient,
+                TweenInfo.new(8, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut),
+                {
+                    Rotation = textGradient.Rotation + 45,
+                    Offset = Vector2.new(-0.4, 0)
+                }
+            )
+            textGradientShift2:Play()
+            wait(4)
+        end
+    end)
+    
+    spawn(function()
+        wait(1.2)
+        while glowFrame.Parent do
+            local glowPulse1 = TweenService:Create(
+                glowFrame,
+                TweenInfo.new(4, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut),
+                {
+                    BackgroundTransparency = 0.4,
+                    Size = UDim2.new(1.4, 0, 1.5, 0),
+                    Position = UDim2.new(-0.2, 0, -0.25, 0)
+                }
+            )
+            glowPulse1:Play()
+            wait(4)
+            
+            local glowPulse2 = TweenService:Create(
+                glowFrame,
+                TweenInfo.new(4, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut),
+                {
+                    BackgroundTransparency = 0.8,
+                    Size = UDim2.new(1.2, 0, 1.3, 0),
+                    Position = UDim2.new(-0.1, 0, -0.15, 0)
+                }
+            )
+            glowPulse2:Play()
+            wait(4)
+        end
+    end)
+    
+    wait(3.0)
+    
+    local fadeOutOverlay = Instance.new("Frame")
+    fadeOutOverlay.Name = "FadeOutOverlay"
+    fadeOutOverlay.Size = UDim2.new(1, 0, 1, 0)
+    fadeOutOverlay.Position = UDim2.new(0, 0, 0, 0)
+    fadeOutOverlay.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    fadeOutOverlay.BackgroundTransparency = 1
+    fadeOutOverlay.BorderSizePixel = 0
+    fadeOutOverlay.ZIndex = 100
+    fadeOutOverlay.Parent = mainFrame
+    
+    local finalFlash = Instance.new("Frame")
+    finalFlash.Size = UDim2.new(1, 0, 1, 0)
+    finalFlash.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    finalFlash.BackgroundTransparency = 1
+    finalFlash.BorderSizePixel = 0
+    finalFlash.ZIndex = 95
+    finalFlash.Parent = mainFrame
+    
+    local flashIn1 = TweenService:Create(
+        finalFlash,
+        TweenInfo.new(0.03, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+        {BackgroundTransparency = 0.94}
+    )
+    flashIn1:Play()
+    
+    flashIn1.Completed:Connect(function()
+        local flashIn2 = TweenService:Create(
+            finalFlash,
+            TweenInfo.new(0.04, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut),
+            {BackgroundTransparency = 0.97}
+        )
+        flashIn2:Play()
+        
+        flashIn2.Completed:Connect(function()
+            local flashOut = TweenService:Create(
+                finalFlash,
+                TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.In),
+                {BackgroundTransparency = 1}
+            )
+            flashOut:Play()
+            
+            flashOut.Completed:Connect(function()
+                finalFlash:Destroy()
+            end)
+        end)
+    end)
+    
+    wait(0.3)
+    
+    spawn(function()
+        local fullText = "SH | STUDIO"
+        for i = #fullText, 1, -1 do
+            mainText.Text = string.sub(fullText, 1, i)
+            textShadow.Text = string.sub(fullText, 1, i)
+            
+            if string.sub(fullText, i, i) ~= " " then
+                local letterFade = TweenService:Create(
+                    mainText,
+                    TweenInfo.new(0.08, Enum.EasingStyle.Back, Enum.EasingDirection.In),
+                    {Position = UDim2.new(0, 0, 0.02, 0)}
+                )
+                letterFade:Play()
+                
+                letterFade.Completed:Connect(function()
+                    mainText.Position = UDim2.new(0, 0, 0, 0)
+                end)
+            end
+            
+            wait(0.05)
+        end
+    end)
+    
+    local textShrink = TweenService:Create(
+        textContainer,
+        TweenInfo.new(1.0, Enum.EasingStyle.Quart, Enum.EasingDirection.In),
+        {
+            Size = UDim2.new(0.15, 0, 0.08, 0),
+            Position = UDim2.new(0.425, 0, 0.46, 0)
+        }
+    )
+    textShrink:Play()
+    
+    local subtitleFadeOut = TweenService:Create(
+        subtitle,
+        TweenInfo.new(0.6, Enum.EasingStyle.Quad, Enum.EasingDirection.In),
+        {TextTransparency = 1}
+    )
+    subtitleFadeOut:Play()
+    
+    wait(0.25)
+    
+    local linesContract = TweenService:Create(
+        topLine,
+        TweenInfo.new(0.7, Enum.EasingStyle.Quart, Enum.EasingDirection.In),
+        {Size = UDim2.new(0, 0, 0, 4)}
+    )
+    linesContract:Play()
+    
+    local topGlowFade = TweenService:Create(
+        topLineGlow,
+        TweenInfo.new(0.7, Enum.EasingStyle.Quad, Enum.EasingDirection.In),
+        {Transparency = 1}
+    )
+    topGlowFade:Play()
+    
+    local bottomContract = TweenService:Create(
+        bottomLine,
+        TweenInfo.new(0.7, Enum.EasingStyle.Quart, Enum.EasingDirection.In),
+        {Size = UDim2.new(0, 0, 0, 4)}
+    )
+    bottomContract:Play()
+    
+    local bottomGlowFade = TweenService:Create(
+        bottomLineGlow,
+        TweenInfo.new(0.7, Enum.EasingStyle.Quad, Enum.EasingDirection.In),
+        {Transparency = 1}
+    )
+    bottomGlowFade:Play()
+    
+    wait(0.25)
+    
+    local glowCollapse = TweenService:Create(
+        glowFrame,
+        TweenInfo.new(1.0, Enum.EasingStyle.Quart, Enum.EasingDirection.In),
+        {
+            Size = UDim2.new(0, 0, 0, 0),
+            Position = UDim2.new(0.5, 0, 0.5, 0),
+            BackgroundTransparency = 1
+        }
+    )
+    glowCollapse:Play()
+    
+    wait(0.5)
+    
+    local finalFadeOut = TweenService:Create(
+        fadeOutOverlay,
+        TweenInfo.new(1.5, Enum.EasingStyle.Quart, Enum.EasingDirection.In),
+        {BackgroundTransparency = 0}
+    )
+    finalFadeOut:Play()
+    
+    spawn(function()
+        wait(0.2)
+        
+        for _, particle in pairs(particleContainer:GetChildren()) do
+            if particle:IsA("Frame") then
+                local particleFadeOut = TweenService:Create(
+                    particle,
+                    TweenInfo.new(1.2, Enum.EasingStyle.Quad, Enum.EasingDirection.In),
+                    {BackgroundTransparency = 1}
+                )
+                particleFadeOut:Play()
+            end
+        end
+        
+        for _, smoke in pairs(smokeContainer:GetChildren()) do
+            if smoke:IsA("Frame") then
+                local smokeFadeOut = TweenService:Create(
+                    smoke,
+                    TweenInfo.new(1.5, Enum.EasingStyle.Quad, Enum.EasingDirection.In),
+                    {BackgroundTransparency = 1}
+                )
+                smokeFadeOut:Play()
+            end
+        end
+        
+        for _, ray in pairs(lightRayContainer:GetChildren()) do
+            if ray:IsA("Frame") then
+                local rayFadeOut = TweenService:Create(
+                    ray,
+                    TweenInfo.new(1.2, Enum.EasingStyle.Quad, Enum.EasingDirection.In),
+                    {BackgroundTransparency = 1}
+                )
+                rayFadeOut:Play()
+            end
+        end
+        
+        for _, ring in pairs(vortexContainer:GetChildren()) do
+            if ring:IsA("Frame") then
+                local vortexFadeOut = TweenService:Create(
+                    ring,
+                    TweenInfo.new(1.5, Enum.EasingStyle.Quad, Enum.EasingDirection.In),
+                    {BackgroundTransparency = 1}
+                )
+                vortexFadeOut:Play()
+                
+                local finalSpin = TweenService:Create(
+                    ring,
+                    TweenInfo.new(1.2, Enum.EasingStyle.Expo, Enum.EasingDirection.In),
+                    {Rotation = ring.Rotation + 360}
+                )
+                finalSpin:Play()
+            end
+        end
+    end)
+    
+    spawn(function()
+        wait(0.6)
+        local finalZoom = TweenService:Create(
+            mainFrame,
+            TweenInfo.new(1.2, Enum.EasingStyle.Quart, Enum.EasingDirection.In),
+            {
+                Size = UDim2.new(1.05, 0, 1.05, 0),
+                Position = UDim2.new(-0.025, 0, -0.025, 0)
+            }
+        )
+        finalZoom:Play()
+        
+        local finalRotate = TweenService:Create(
+            vortexContainer,
+            TweenInfo.new(1.0, Enum.EasingStyle.Quad, Enum.EasingDirection.In),
+            {Rotation = 10}
+        )
+        finalRotate:Play()
+    end)
+    
+    finalFadeOut.Completed:Connect(function()
+        local icon = Instance.new("ImageLabel")
+        icon.Name = "FinalIcon"
+        icon.Size = UDim2.new(0, 150, 0, 150)
+        icon.Position = UDim2.new(0.5, 0, 0.5, 0)
+        icon.AnchorPoint = Vector2.new(0.5, 0.5)
+        icon.BackgroundTransparency = 1
+        icon.Image = "rbxassetid://91665116750253"
+        icon.ImageTransparency = 1
+        icon.ZIndex = 200
+        icon.Parent = screenGui
+        
+        local iconFadeIn = TweenService:Create(
+            icon,
+            TweenInfo.new(1.2, Enum.EasingStyle.Sine, Enum.EasingDirection.Out),
+            {ImageTransparency = 0}
+        )
+        iconFadeIn:Play()
+        
+        wait(2.5)
+        
+        local iconFadeOut = TweenService:Create(
+            icon,
+            TweenInfo.new(0.8, Enum.EasingStyle.Sine, Enum.EasingDirection.In),
+            {ImageTransparency = 1}
+        )
+        iconFadeOut:Play()
+        
+        wait(0.8)
+        
+        setclipboard("https://discord.gg/BuCu2dXqZr")
+        screenGui:Destroy()
+    end)
+end
+
+createR1Intro()
