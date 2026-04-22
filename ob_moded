@@ -307,7 +307,7 @@ function Library:CreateWindow(hubname)
     toggle_Image.BackgroundTransparency = 1.000
     toggle_Image.BorderSizePixel = 0
     toggle_Image.Size = UDim2.new(0, 42, 0, 42)
-    toggle_Image.Image = "rbxassetid://88353968507347"
+    toggle_Image.Image = "rbxassetid://91665116750253"
     toggle_Image.ImageColor3 = ThemeColor
 
     local minimizetog = false
@@ -821,7 +821,7 @@ function Library:CreateWindow(hubname)
                     ToggleGlow.Position = UDim2.new(0.5, 0, 0.5, 0)
                     ToggleGlow.AnchorPoint = Vector2.new(0.5, 0.5)
                     ToggleGlow.Size = UDim2.new(0, 0, 0, 0)
-                    ToggleGlow.Image = "rbxassetid://4560909609"
+                    ToggleGlow.Image = "rbxassetid://91665116750253"
                     ToggleGlow.ImageColor3 = ThemeColor
                     ToggleGlow.ImageTransparency = 1
                     ToggleGlow.ZIndex = 1
